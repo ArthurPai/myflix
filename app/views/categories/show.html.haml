@@ -1,0 +1,12 @@
+%section.genre
+  %header.clearfix
+    %h1= @category.name.titleize
+    .genre_sorting
+      = form_tag(category_url(@category), method: 'get') do
+        Sort by:
+        %select{name: 'sort_type', onchange: 'this.form.submit()'}
+          = options_for_select([['Title: A - Z', 'a-z'], ['Title: Z - A', 'z-a'], ['Rating', 'rating']], @sort_type)
+  %article.row
+    - @videos.each do |video|
+      .video.col-md-2
+        = render video
