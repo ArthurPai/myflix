@@ -14,7 +14,19 @@ describe Video do
     cat = Category.create(name: 'TV')
 
     cat.videos << video
-    
+
     expect(video.category).to eq(cat)
+  end
+
+  it 'will save failed without title' do
+    video = Video.new(description: 'Funny video')
+
+    expect(video.save).to eq(false)
+  end
+
+  it 'will save failed without description' do
+    video = Video.new(title: 'Monk')
+
+    expect(video.save).to eq(false)
   end
 end
