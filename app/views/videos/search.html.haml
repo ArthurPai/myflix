@@ -1,0 +1,5 @@
+%article.video_category
+  .videos.row
+    - @videos.each do |video|
+      .video.col-sm-2
+        = render video
