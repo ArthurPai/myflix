@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :require_login, only: [:destroy]
+  before_action :require_not_login, only: [:new, :create]
 
   def new
   end
@@ -11,7 +13,7 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       redirect_to home_path
     else
-      flash.now[:error] = 'Something error of your email or password!!'
+      flash.now[:danger] = 'Something error of your email or password!!'
       render :new
     end
   end
