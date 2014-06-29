@@ -4,7 +4,7 @@ describe Category do
   it { should have_many(:videos).order('title asc') }
 
   describe 'recent videos' do
-    let!(:cat) { Fabricate(:category, videos: []) }
+    let!(:cat) { Fabricate(:category) }
 
     it 'returns empty array if dose not have any videos' do
       expect(cat.recent_videos).to eq([])
