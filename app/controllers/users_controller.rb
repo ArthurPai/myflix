@@ -10,7 +10,7 @@ class UsersController < ApplicationController
 
     if @user.save
       flash[:success] = 'Register Succeed.'
-      session[:user_id] = @user.id
+      sign_in @user
       redirect_to home_path
     else
       render :new
