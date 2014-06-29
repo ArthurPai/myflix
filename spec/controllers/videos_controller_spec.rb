@@ -48,6 +48,11 @@ describe VideosController do
         expect(assigns(:video)).to eq(video)
       end
 
+      it 'sets the @review variable' do
+        get :show, id: video.id
+        expect(assigns(:review)).to be_instance_of(Review)
+      end
+
       it 'sets the @reviews variable' do
         review_old = Fabricate(:review, video: video, created_at: 1.days.ago)
         review_new = Fabricate(:review, video: video)

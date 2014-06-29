@@ -6,4 +6,7 @@ describe Review do
 
   it { should respond_to(:rating) }
   it { should respond_to(:content) }
+
+  it { should validate_presence_of(:content) }
+  it { should validate_presence_of(:rating) }
 end
