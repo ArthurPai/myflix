@@ -38,11 +38,6 @@ describe VideosController do
         get :index
         expect(assigns(:categories)).to eq(Category.all)
       end
-
-      it 'render the index template' do
-        get :index
-        expect(response).to render_template(:index)
-      end
     end
 
     describe 'GET show' do
@@ -52,11 +47,6 @@ describe VideosController do
         get :show, id: video.id
         expect(assigns(:video)).to eq(video)
       end
-
-      it 'render the show template' do
-        get :show, { id: video.id }
-        expect(response).to render_template(:show)
-      end
     end
 
     describe 'GET search' do
@@ -65,11 +55,6 @@ describe VideosController do
       it 'sets the @videos variable' do
         get :search, search: 'mon'
         expect(assigns(:videos)).to eq([monk])
-      end
-
-      it 'render the search template' do
-        get :search, search: 'mon'
-        expect(response).to render_template(:search)
       end
     end
   end
