@@ -24,5 +24,7 @@
               .col-sm-2
                 %span Rating: #{review.rating} / 5
                 %p by <a href="">#{review.user.full_name}</a>
+                %span
+                  %small #{time_ago_in_words(review.created_at)} ago
               .col-sm-8
                 %p= review.content

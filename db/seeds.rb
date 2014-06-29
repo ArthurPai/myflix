@@ -108,4 +108,4 @@ kanbe = Video.create(
     category: dramas)
 
 arthur = User.create(email: 'arthur@intxtion.com', full_name: 'Arthur Pai', password: '1111', )
-5.times { Fabricate(:review, video: kanbe, user: arthur) }
+5.times { |i| Fabricate(:review, video: kanbe, user: arthur, rating: i, created_at: i.days.ago) }

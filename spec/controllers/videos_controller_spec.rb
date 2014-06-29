@@ -49,10 +49,10 @@ describe VideosController do
       end
 
       it 'sets the @reviews variable' do
-        review1 = Fabricate(:review, video: video)
-        review2 = Fabricate(:review, video: video)
+        review_old = Fabricate(:review, video: video, created_at: 1.days.ago)
+        review_new = Fabricate(:review, video: video)
         get :show, id: video.id
-        expect(assigns(:reviews)).to match_array([review1, review2])
+        expect(assigns(:reviews)).to eq([review_new, review_old])
       end
     end
 
