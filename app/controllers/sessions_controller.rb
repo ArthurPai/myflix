@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  before_action :require_login, only: [:destroy]
+  before_action :require_logged_in, only: [:destroy]
   before_action :require_not_login, only: [:new, :create]
 
   def new
@@ -23,4 +23,12 @@ class SessionsController < ApplicationController
     sign_out
     redirect_to root_path
   end
+
+  private
+
+    def require_logged_in
+      unless logged_in?
+        redirect_to root_path
+      end
+    end
 end
