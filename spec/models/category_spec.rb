@@ -4,36 +4,33 @@ describe Category do
   it { should have_many(:videos).order('title asc') }
 
   describe 'recent videos' do
-    let!(:cat) { Category.create(name: 'Commedies') }
+    let!(:cat) { Fabricate(:category, videos: []) }
 
-    it 'returns the videos in the reverse order by created time' do
-      video1 = Video.create(title: "video 1", description: "video info 1", category: cat, created_at: 1.days.from_now)
-      video2 = Video.create(title: "video 2", description: "video info 2", category: cat, created_at: 2.days.from_now)
-
-      expect(cat.recent_videos).to eq([video2, video1])
+    it 'returns empty array if dose not have any videos' do
+      expect(cat.recent_videos).to eq([])
     end
 
     it 'returns all the videos if there are less then 6 videos' do
-      Video.create(title: "video 1", description: "video info 1", category: cat, created_at: 1.days.from_now)
-      Video.create(title: "video 2", description: "video info 2", category: cat, created_at: 2.days.from_now)
+      Fabricate(:video, category: cat)
+      Fabricate(:video, category: cat)
 
       expect(cat.recent_videos.count).to eq(2)
     end
 
+    it 'returns the videos in the reverse order by created time' do
+      video_old = Fabricate(:video, category: cat, created_at: 1.days.ago)
+      video_new = Fabricate(:video, category: cat)
+
+      expect(cat.recent_videos).to eq([video_new, video_old])
+    end
+
     it 'returns an array of 6 videos if there are more then 6 videos' do
       videos = []
-      (1..8).each do |idx|
-        video = Video.create(title: "video #{idx}", description: "video info #{idx}", category: cat, created_at: idx.days.from_now)
-        videos << video if idx > 2
-      end
-      videos.reverse!
+      Fabricate(:video, category: cat, created_at: 1.days.ago)
+      6.times { |i| videos << Fabricate(:video, category: cat, created_at: i.seconds.ago) }
 
       expect(cat.recent_videos.count).to eq(6)
       expect(cat.recent_videos).to eq(videos)
-    end
-
-    it 'returns empty array if dose not have any videos' do
-      expect(cat.recent_videos).to eq([])
     end
   end
 end

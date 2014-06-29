@@ -7,9 +7,9 @@ describe Video do
   it { should validate_presence_of(:description) }
 
   describe 'search by title' do
-    let!(:monk) { Video.create(title: 'Monk', description: 'Grate Video!', created_at: 1.days.ago) }
-    let!(:monkey) { Video.create(title: 'Monkey', description: 'It is funny!') }
-    let!(:south_park) { Video.create(title: 'South Park', description: 'So funny!') }
+    let!(:monk)       { Fabricate(:video, title: 'Monk', created_at: 2.days.ago) }
+    let!(:monkey)     { Fabricate(:video, title: 'monkey', created_at: 1.days.ago) }
+    let!(:south_park) { Fabricate(:video, title: 'South Park') }
 
     it 'returns an empty array if there is no match' do
       expect(Video.search_by_title('Transformer')).to eq([])
