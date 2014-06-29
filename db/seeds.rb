@@ -106,3 +106,6 @@ kanbe = Video.create(
     small_cover_url: '/tmp/kanbe.jpg',
     large_cover_url: '/tmp/kanbe_large.jpg',
     category: dramas)
+
+arthur = User.create(email: 'arthur@intxtion.com', full_name: 'Arthur Pai', password: '1111', )
+5.times { Fabricate(:review, video: kanbe, user: arthur) }
