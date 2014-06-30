@@ -4,17 +4,9 @@ class QueueItem < ActiveRecord::Base
 
   validates_presence_of :list_order, :user, :video
 
-  def video_title
-    video.title
-  end
-
-  def category
-    video.category
-  end
-
-  def category_name
-    category.name
-  end
+  delegate :category, to: :video
+  delegate :title, to: :video, prefix: :video
+  delegate :name, to: :category, prefix: :category
 
   def rating
     review = Review.where(user: user, video: video).first
