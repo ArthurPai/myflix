@@ -109,3 +109,6 @@ kanbe = Video.create(
 
 arthur = User.create(email: 'arthur@intxtion.com', full_name: 'Arthur Pai', password: '1111', )
 5.times { |i| Fabricate(:review, video: kanbe, user: arthur, rating: i, created_at: i.days.ago) }
+arthur.queue_items.create(list_order: 1, video: kanbe)
+arthur.queue_items.create(list_order: 2, video: mozu)
+arthur.queue_items.create(list_order: 3, video: futurama)
