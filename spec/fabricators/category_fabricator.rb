@@ -1,3 +1,3 @@
 Fabricator(:category) do
-  name 'Comedies'
+  name { Faker::Lorem.word }
 end
