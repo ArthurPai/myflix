@@ -7,9 +7,8 @@ class QueueItemsController < ApplicationController
 
   def create
     video = Video.find(params[:video_id])
-    queue_item = current_user.queue_items.new(list_order: new_order, video: video)
 
-    unless queue_item.save
+    unless queue_video(video)
       flash[:warning] = 'This video already in your queue.'
     end
 
@@ -17,6 +16,11 @@ class QueueItemsController < ApplicationController
   end
 
   private
+
+    def queue_video(video)
+      queue_item = current_user.queue_items.build(list_order: new_order, video: video)
+      queue_item.save
+    end
 
     def new_order
       last_item = current_user.queue_items.order(:list_order).last
