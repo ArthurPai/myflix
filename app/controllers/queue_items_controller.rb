@@ -19,14 +19,13 @@ class QueueItemsController < ApplicationController
     queue_item = current_user.queue_items.find_by(id: params[:id])
 
     if queue_item.nil?
-      flash.now[:danger] = "You don't have permission to remove this queue"
+      flash[:danger] = "You don't have permission to remove this queue"
     else
       queue_item.destroy
       reorder_queue_items
     end
 
-    @queue_items = current_user.queue_items
-    render 'queue_items/index'
+    redirect_to queue_items_path
   end
 
   private

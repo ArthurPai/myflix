@@ -91,10 +91,10 @@ describe QueueItemsController do
     end
 
     describe 'DELETE destroy' do
-      it 're-renders my queue template' do
+      it 'redirect to queue items index page' do
         queue_item = Fabricate(:queue_item, user: user)
         delete :destroy, id: queue_item.id
-        expect(response).to render_template 'queue_items/index'
+        expect(response).to redirect_to queue_items_path
       end
 
       it 'deletes the queue item' do
@@ -123,13 +123,6 @@ describe QueueItemsController do
         queue_item = Fabricate(:queue_item, video: video2, user: user)
         delete :destroy, id: queue_item.id
         expect(QueueItem.where(video_id: video2.id, user_id: user.id)).to eq([])
-      end
-
-      it 'sets @queue_items variable' do
-        queue_item1 = Fabricate(:queue_item, user: user)
-        queue_item2 = Fabricate(:queue_item, user: user)
-        delete :destroy, id: queue_item1.id
-        expect(assigns(:queue_items)).to match_array([queue_item2])
       end
 
       it 'reorder all queue items of logged in user' do
