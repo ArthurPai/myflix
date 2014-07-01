@@ -25,7 +25,7 @@ class QueueItemsController < ApplicationController
       reorder_queue_items
     end
 
-    redirect_to queue_items_path
+    redirect_to my_queue_path
   end
 
   private

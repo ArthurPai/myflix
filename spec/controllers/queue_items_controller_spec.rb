@@ -94,7 +94,7 @@ describe QueueItemsController do
       it 'redirect to queue items index page' do
         queue_item = Fabricate(:queue_item, user: user)
         delete :destroy, id: queue_item.id
-        expect(response).to redirect_to queue_items_path
+        expect(response).to redirect_to my_queue_path
       end
 
       it 'deletes the queue item' do
