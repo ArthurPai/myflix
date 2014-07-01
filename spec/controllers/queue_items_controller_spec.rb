@@ -78,9 +78,9 @@ describe QueueItemsController do
           expect(user.queue_items.count).to eq(1)
         end
 
-        it 'redirect to video show page' do
+        it 'redirect to my queue page' do
           post :create, video_id: video.id
-          expect(response).to redirect_to video
+          expect(response).to redirect_to my_queue_path
         end
 
         it 'displays the error flash message' do

@@ -9,12 +9,11 @@ class QueueItemsController < ApplicationController
     video = Video.find(params[:video_id])
     queue_item = current_user.queue_items.new(list_order: new_order, video: video)
 
-    if queue_item.save
-      redirect_to my_queue_path
-    else
+    unless queue_item.save
       flash[:warning] = 'This video already in your queue.'
-      redirect_to video
     end
+
+    redirect_to my_queue_path
   end
 
   private
