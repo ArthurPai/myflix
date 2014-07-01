@@ -35,6 +35,13 @@ describe QueueItemsController do
           expect(user.queue_items.count).to eq(1)
         end
 
+        it 'add queue item and association with the video' do
+          video = Fabricate(:video)
+
+          post :create, video_id: video.id
+          expect(QueueItem.first.video).to eq(video)
+        end
+
         it 'sets list order be 1 of queue item when add to empty my queue' do
           video = Fabricate(:video)
 
