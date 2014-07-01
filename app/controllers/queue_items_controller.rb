@@ -15,6 +15,20 @@ class QueueItemsController < ApplicationController
     redirect_to my_queue_path
   end
 
+  def destroy
+    queue_item = current_user.queue_items.find_by(id: params[:id])
+
+    if queue_item.nil?
+      flash.now[:danger] = "You don't have permission to remove this queue"
+    else
+      queue_item.destroy
+      reorder_queue_items
+    end
+
+    @queue_items = current_user.queue_items
+    render 'queue_items/index'
+  end
+
   private
 
     def queue_video(video)
@@ -26,5 +40,13 @@ class QueueItemsController < ApplicationController
       last_item = current_user.queue_items.order(:list_order).last
       current_order = last_item ? last_item.list_order : 0
       current_order + 1
+    end
+
+    def reorder_queue_items
+      idx = 1
+      current_user.queue_items.order('list_order').each do |queue_item|
+        queue_item.update(list_order: idx)
+        idx += 1
+      end
     end
 end

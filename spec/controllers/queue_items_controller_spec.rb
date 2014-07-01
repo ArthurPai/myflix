@@ -89,6 +89,62 @@ describe QueueItemsController do
         end
       end
     end
+
+    describe 'DELETE destroy' do
+      it 're-renders my queue template' do
+        queue_item = Fabricate(:queue_item, user: user)
+        delete :destroy, id: queue_item.id
+        expect(response).to render_template 'queue_items/index'
+      end
+
+      it 'deletes the queue item' do
+        queue_item = Fabricate(:queue_item, user: user)
+        delete :destroy, id: queue_item.id
+        expect(QueueItem.count).to eq(0)
+      end
+
+      it 'does not delete queue item if not the owner of queue item' do
+        queue_item_owner = Fabricate(:user)
+        queue_item = Fabricate(:queue_item, user: queue_item_owner)
+        delete :destroy, id: queue_item.id
+        expect(QueueItem.count).to eq(1)
+      end
+
+      it 'displays error flash message if not the owner of queue item to delete it' do
+        queue_item_owner = Fabricate(:user)
+        queue_item = Fabricate(:queue_item, user: queue_item_owner)
+        delete :destroy, id: queue_item.id
+        expect(flash[:danger]).not_to be_blank
+      end
+
+      it 'remove the video from the queue items of user' do
+        Fabricate(:video)
+        video2 = Fabricate(:video)
+        queue_item = Fabricate(:queue_item, video: video2, user: user)
+        delete :destroy, id: queue_item.id
+        expect(QueueItem.where(video_id: video2.id, user_id: user.id)).to eq([])
+      end
+
+      it 'sets @queue_items variable' do
+        queue_item1 = Fabricate(:queue_item, user: user)
+        queue_item2 = Fabricate(:queue_item, user: user)
+        delete :destroy, id: queue_item1.id
+        expect(assigns(:queue_items)).to match_array([queue_item2])
+      end
+
+      it 'reorder all queue items of logged in user' do
+        video1 = Fabricate(:video)
+        video2 = Fabricate(:video)
+        video3 = Fabricate(:video)
+        queue_item3 = Fabricate(:queue_item, list_order: 3, video: video3, user: user)
+        queue_item2 = Fabricate(:queue_item, list_order: 2, video: video2, user: user)
+        queue_item1 = Fabricate(:queue_item, list_order: 1, video: video1, user: user)
+
+        delete :destroy, id: queue_item2.id
+        expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
+        expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
+      end
+    end
   end
 
   context 'with unauthenticated user' do
@@ -102,6 +158,13 @@ describe QueueItemsController do
     describe 'POST create' do
       it 'redirect to root_path' do
         post :create, video_id: Fabricate(:video).id
+        expect(response).to redirect_to root_path
+      end
+    end
+
+    describe 'DELETE destroy' do
+      it 'redirect to root_path' do
+        delete :destroy, id: 1
         expect(response).to redirect_to root_path
       end
     end
