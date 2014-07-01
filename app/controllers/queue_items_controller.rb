@@ -7,10 +7,7 @@ class QueueItemsController < ApplicationController
 
   def create
     video = Video.find(params[:video_id])
-
-    last_item = current_user.queue_items.order(:list_order).last
-    list_order = last_item ? last_item.list_order+1 : 1
-    queue_item = current_user.queue_items.new(list_order: list_order, video: video)
+    queue_item = current_user.queue_items.new(list_order: new_order, video: video)
 
     if queue_item.save
       redirect_to my_queue_path
@@ -19,4 +16,12 @@ class QueueItemsController < ApplicationController
       redirect_to video
     end
   end
+
+  private
+
+    def new_order
+      last_item = current_user.queue_items.order(:list_order).last
+      current_order = last_item ? last_item.list_order : 0
+      current_order + 1
+    end
 end
