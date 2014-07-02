@@ -50,8 +50,8 @@ class QueueItemsController < ApplicationController
   private
 
     def queue_items_owner?
-      params[:queue_items].each do |key, queue_item|
-        item = QueueItem.find(key)
+      params[:queue_items].each do |queue_item|
+        item = QueueItem.find(queue_item[:id])
         return false unless item.user == current_user
       end
       true
@@ -59,7 +59,7 @@ class QueueItemsController < ApplicationController
 
     # {1 => {list_order: '2'}, 2 => {list_order: '2'}, 3 => {list_order: '1'}}
     def order_duplicate?
-      orders = params[:queue_items].map { |k,v| v['list_order'].to_f }
+      orders = params[:queue_items].map { |queue_item| queue_item[:list_order].to_f }
       # [2, 2, 1]
 
       duplicates = orders.each_with_index.reduce({}) { |hash, (item, index)|
@@ -75,8 +75,8 @@ class QueueItemsController < ApplicationController
 
   def update_queue_items
     QueueItem.transaction do
-      params[:queue_items].each do |key, queue_item|
-        item = QueueItem.find(key)
+      params[:queue_items].each do |queue_item|
+        item = QueueItem.find(queue_item[:id])
         item.update!(list_order: queue_item[:list_order])
       end
     end

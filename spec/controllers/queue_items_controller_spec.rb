@@ -105,26 +105,26 @@ describe QueueItemsController do
       let!(:queue_item3) { Fabricate(:queue_item, list_order: 3, user: user) }
 
       it 'redirect to my queue path' do
-        patch :update, queue_items: { '1' => {list_order: '1'} }
+        patch :update, queue_items: [{ id: 1, list_order: 1 }]
         expect(response).to redirect_to my_queue_path
       end
 
       context 'with valid input' do
         it 'reorders the queue items' do
-          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '1'} }
+          patch :update, queue_items: [{ id: queue_item1.id, list_order: 2 }, { id: queue_item2.id, list_order: 1 }]
           expect(QueueItem.find(queue_item1.id).list_order).to eq(2)
           expect(QueueItem.find(queue_item2.id).list_order).to eq(1)
         end
 
         it 'normalize queue items that start order by 1' do
-          patch :update, queue_items: { queue_item1.id => {list_order: '4'} }
+          patch :update, queue_items: [{ id: queue_item1.id, list_order: 4 }]
           expect(QueueItem.find(queue_item2.id).list_order).to eq(1)
           expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
           expect(QueueItem.find(queue_item1.id).list_order).to eq(3)
         end
 
         it 'normalize the queue items to continue order' do
-          patch :update, queue_items: { queue_item2.id => {list_order: '4'} }
+          patch :update, queue_items: [{ id: queue_item2.id, list_order: 4 }]
           expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
           expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
           expect(QueueItem.find(queue_item2.id).list_order).to eq(3)
@@ -132,29 +132,34 @@ describe QueueItemsController do
       end
 
       context 'with duplicate order' do
+        before(:each) do
+          patch :update, queue_items: [{ id: queue_item1.id, list_order: 2 }, { id: queue_item2.id, list_order: 2 }, { id: queue_item3.id, list_order: 1 }]
+        end
+
         it 'does not change the order of each queue items' do
-          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '2'} , queue_item3.id => {list_order: '1'} }
           expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
           expect(QueueItem.find(queue_item2.id).list_order).to eq(2)
           expect(QueueItem.find(queue_item3.id).list_order).to eq(3)
         end
 
         it 'displays warning flash message' do
-          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '2'} , queue_item3.id => {list_order: '1'} }
+          patch :update, queue_items: [{ id: queue_item1.id, list_order: 2 }, { id: queue_item2.id, list_order: 2 }, { id: queue_item3.id, list_order: 1 }]
           expect(flash[:warning]).not_to be_blank
         end
       end
 
       context 'with invalid non-integer order' do
+        before(:each) do
+          patch :update, queue_items: [{ id: queue_item1.id, list_order: 2 }, { id: queue_item2.id, list_order: 1 }, { id: queue_item3.id, list_order: 3.5 }]
+        end
+
         it 'does not change the order of each queue items' do
-          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '1'} , queue_item3.id => {list_order: '3.5'} }
           expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
           expect(QueueItem.find(queue_item2.id).list_order).to eq(2)
           expect(QueueItem.find(queue_item3.id).list_order).to eq(3)
         end
 
         it 'displays warning flash message' do
-          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '1'} , queue_item3.id => {list_order: '3.5'} }
           expect(flash[:danger]).not_to be_blank
         end
       end
@@ -164,7 +169,7 @@ describe QueueItemsController do
         let!(:queue_item4) { Fabricate(:queue_item, list_order: 1, user: other_user) }
         let!(:queue_item5) { Fabricate(:queue_item, list_order: 2, user: other_user) }
         before(:each) do
-          patch :update, queue_items: { queue_item4.id => {list_order: '2'}, queue_item5.id => {list_order: '2'} }
+          patch :update, queue_items: [{ id: queue_item4.id, list_order: 2 }, { id: queue_item5.id, list_order: '2'} ]
         end
 
         it 'does not reorder' do
