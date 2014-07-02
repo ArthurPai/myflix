@@ -70,7 +70,7 @@ class QueueItemsController < ApplicationController
       }
       # {2=>[0, 1]}
 
-      !duplicates.blank?
+      duplicates.present?
     end
 
   def update_queue_items

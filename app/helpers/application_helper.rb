@@ -1,7 +1,7 @@
 module ApplicationHelper
 
   def video_large_cover(video)
-    video.large_cover_url.blank? ? 'http://dummyimage.com/665x375/000000/00a2ff' : video.large_cover_url
+    video.large_cover_url.present? ? video.large_cover_url : '/tmp/default_large.png'
   end
 
   def options_for_video_review(selected=nil)
