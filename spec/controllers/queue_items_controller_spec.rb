@@ -17,6 +17,15 @@ describe QueueItemsController do
         get :index
         expect(assigns(:queue_items)).to match_array([item1, item2])
       end
+
+      it 'sets the @queue with order by the item list_order' do
+        item1 = Fabricate(:queue_item, list_order: 2, user: user)
+        item2 = Fabricate(:queue_item, list_order: 1, user: user)
+        Fabricate(:queue_item)
+
+        get :index
+        expect(assigns(:queue_items)).to eq([item2, item1])
+      end
     end
 
     describe 'POST create' do
@@ -60,10 +69,10 @@ describe QueueItemsController do
         it 'does not effect list order of queue item by other user queue items' do
           other_user = Fabricate(:user)
           video = Fabricate(:video)
-          Fabricate(:queue_item, list_order: 1, video: video, user: other_user)
+          queue_item = Fabricate(:queue_item, list_order: 1, video: video, user: other_user)
 
           post :create, video_id: video.id
-          expect(user.queue_items.first.list_order).not_to eq(2)
+          expect(QueueItem.find(queue_item.id)).not_to eq(2)
         end
       end
 
@@ -86,6 +95,85 @@ describe QueueItemsController do
         it 'displays the error flash message' do
           post :create, video_id: video.id
           expect(flash[:warning]).not_to be_blank
+        end
+      end
+    end
+
+    describe 'PATCH update' do
+      let!(:queue_item1) { Fabricate(:queue_item, list_order: 1, user: user) }
+      let!(:queue_item2) { Fabricate(:queue_item, list_order: 2, user: user) }
+      let!(:queue_item3) { Fabricate(:queue_item, list_order: 3, user: user) }
+
+      it 'redirect to my queue path' do
+        patch :update, queue_items: { '1' => {list_order: '1'} }
+        expect(response).to redirect_to my_queue_path
+      end
+
+      context 'with valid input' do
+        it 'reorders the queue items' do
+          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '1'} }
+          expect(QueueItem.find(queue_item1.id).list_order).to eq(2)
+          expect(QueueItem.find(queue_item2.id).list_order).to eq(1)
+        end
+
+        it 'normalize queue items that start order by 1' do
+          patch :update, queue_items: { queue_item1.id => {list_order: '4'} }
+          expect(QueueItem.find(queue_item2.id).list_order).to eq(1)
+          expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
+          expect(QueueItem.find(queue_item1.id).list_order).to eq(3)
+        end
+
+        it 'normalize the queue items to continue order' do
+          patch :update, queue_items: { queue_item2.id => {list_order: '4'} }
+          expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
+          expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
+          expect(QueueItem.find(queue_item2.id).list_order).to eq(3)
+        end
+      end
+
+      context 'with duplicate order' do
+        it 'does not change the order of each queue items' do
+          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '2'} , queue_item3.id => {list_order: '1'} }
+          expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
+          expect(QueueItem.find(queue_item2.id).list_order).to eq(2)
+          expect(QueueItem.find(queue_item3.id).list_order).to eq(3)
+        end
+
+        it 'displays warning flash message' do
+          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '2'} , queue_item3.id => {list_order: '1'} }
+          expect(flash[:warning]).not_to be_blank
+        end
+      end
+
+      context 'with invalid non-integer order' do
+        it 'does not change the order of each queue items' do
+          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '1'} , queue_item3.id => {list_order: '3.5'} }
+          expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
+          expect(QueueItem.find(queue_item2.id).list_order).to eq(2)
+          expect(QueueItem.find(queue_item3.id).list_order).to eq(3)
+        end
+
+        it 'displays warning flash message' do
+          patch :update, queue_items: { queue_item1.id => {list_order: '2'}, queue_item2.id => {list_order: '1'} , queue_item3.id => {list_order: '3.5'} }
+          expect(flash[:danger]).not_to be_blank
+        end
+      end
+
+      context 'when not the owner of the queue items' do
+        let(:other_user) { Fabricate(:user) }
+        let!(:queue_item4) { Fabricate(:queue_item, list_order: 1, user: other_user) }
+        let!(:queue_item5) { Fabricate(:queue_item, list_order: 2, user: other_user) }
+        before(:each) do
+          patch :update, queue_items: { queue_item4.id => {list_order: '2'}, queue_item5.id => {list_order: '2'} }
+        end
+
+        it 'does not reorder' do
+          expect(QueueItem.find(queue_item4.id).list_order).to eq(1)
+          expect(QueueItem.find(queue_item5.id).list_order).to eq(2)
+        end
+
+        it 'displays error flash message' do
+          expect(flash[:danger]).not_to be_blank
         end
       end
     end
@@ -151,6 +239,13 @@ describe QueueItemsController do
     describe 'POST create' do
       it 'redirect to root_path' do
         post :create, video_id: Fabricate(:video).id
+        expect(response).to redirect_to root_path
+      end
+    end
+
+    describe 'PATCH update' do
+      it 'redirect to root_path' do
+        patch :update, queue_items: {}
         expect(response).to redirect_to root_path
       end
     end

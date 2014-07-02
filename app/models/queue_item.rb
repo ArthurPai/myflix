@@ -4,6 +4,7 @@ class QueueItem < ActiveRecord::Base
 
   validates_presence_of :list_order, :user, :video
   validates_uniqueness_of :video_id, scope: :user_id
+  validates_numericality_of :list_order, { only_integer: true }
 
   delegate :category, to: :video
   delegate :title, to: :video, prefix: :video
