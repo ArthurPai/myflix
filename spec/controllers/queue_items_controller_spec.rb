@@ -129,6 +129,25 @@ describe QueueItemsController do
           expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
           expect(QueueItem.find(queue_item2.id).list_order).to eq(3)
         end
+
+        context 'and re-rating the video' do
+          it 'updates rating of review if the item association video has review' do
+            review = Fabricate(:review, rating: 1, video: queue_item1.video, user: user)
+
+            patch :update, queue_items: [{ id: queue_item1.id, list_order: queue_item1.list_order, rating:4 } ]
+            expect(QueueItem.find(review.id).rating).to eq(4)
+          end
+
+          it 'creates review if the item association video not have review' do
+            patch :update, queue_items: [{ id: queue_item1.id, list_order: queue_item1.list_order, rating:1 } ]
+            expect(Review.count).to eq(1)
+          end
+
+          it 'creates review with rating if the item association video not have review' do
+            patch :update, queue_items: [{ id: queue_item1.id, list_order: queue_item1.list_order, rating:2 } ]
+            expect(Review.first.rating).to eq(2)
+          end
+        end
       end
 
       context 'with duplicate order' do

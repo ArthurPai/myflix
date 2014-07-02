@@ -77,7 +77,7 @@ class QueueItemsController < ApplicationController
     QueueItem.transaction do
       params[:queue_items].each do |queue_item|
         item = QueueItem.find(queue_item[:id])
-        item.update!(list_order: queue_item[:list_order])
+        item.update!(list_order: queue_item[:list_order], rating: queue_item[:rating])
       end
     end
 
