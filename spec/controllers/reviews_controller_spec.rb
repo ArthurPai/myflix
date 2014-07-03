@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe ReviewsController do
-  let(:video) { Fabricate(:video) }
-  before { set_current_user }
-
   describe 'POST create' do
+    let(:video) { Fabricate(:video) }
+    before { set_current_user }
+
     context 'with valid input' do
       before do
         post :create, video_id: video.id, review: Fabricate.attributes_for(:review)
@@ -55,11 +55,9 @@ describe ReviewsController do
         expect(assigns(:review)).to be_instance_of(Review)
       end
     end
-  end
 
-  it 'redirect to root_path if user not sign in' do
-    clean_current_user
-    post :create, video_id: 1, review: {rating: 5, content: ''}
-    expect(response).to redirect_to root_path
+    it_behaves_like 'require_sign_in' do
+      let(:action) { post :create, video_id: 1, review: {rating: 5, content: ''} }
+    end
   end
 end

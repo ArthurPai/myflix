@@ -11,10 +11,8 @@ describe VideosController do
       expect(assigns(:categories)).to eq(Category.all)
     end
 
-    it 'redirect to root path if user not sign in' do
-      clean_current_user
-      get :index
-      expect(response).to redirect_to(root_path)
+    it_behaves_like 'require_sign_in' do
+      let(:action) { get :index }
     end
   end
 
@@ -38,10 +36,8 @@ describe VideosController do
       expect(assigns(:reviews)).to eq([review_new, review_old])
     end
 
-    it 'redirect to root path if user not sign in' do
-      clean_current_user
-      get :show, id: 0
-      expect(response).to redirect_to(root_path)
+    it_behaves_like 'require_sign_in' do
+      let(:action) { get :show, id: 0 }
     end
   end
 
@@ -53,10 +49,8 @@ describe VideosController do
       expect(assigns(:videos)).to eq([monk])
     end
 
-    it 'redirect to root path if user not sign in' do
-      clean_current_user
-      get :search, search: ''
-      expect(response).to redirect_to(root_path)
+    it_behaves_like 'require_sign_in' do
+      let(:action) { get :search, search: '' }
     end
   end
 end

@@ -22,18 +22,14 @@ describe QueueItemsController do
       expect(assigns(:queue_items)).to eq([item2, item1])
     end
 
-    it 'redirect to root_path if user not sign in' do
-      clean_current_user
-      get :index
-      expect(response).to redirect_to root_path
+    it_behaves_like 'require_sign_in' do
+      let(:action) { get :index }
     end
   end
 
   describe 'POST create' do
-    it 'redirect to root_path if user not sign in' do
-      clean_current_user
-      post :create, video_id: Fabricate(:video).id
-      expect(response).to redirect_to root_path
+    it_behaves_like 'require_sign_in' do
+      let(:action) { post :create, video_id: Fabricate(:video).id }
     end
 
     context 'when video is not added before' do
@@ -116,10 +112,8 @@ describe QueueItemsController do
       expect(response).to redirect_to my_queue_path
     end
 
-    it 'redirect to root_path if user not sign in' do
-      clean_current_user
-      patch :update, queue_items: {}
-      expect(response).to redirect_to root_path
+    it_behaves_like 'require_sign_in' do
+      let(:action) { patch :update, queue_items: {} }
     end
 
     context 'with valid input' do
@@ -263,10 +257,8 @@ describe QueueItemsController do
       expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
     end
 
-    it 'redirect to root_path if user not sign in' do
-      clean_current_user
-      delete :destroy, id: 1
-      expect(response).to redirect_to root_path
+    it_behaves_like 'require_sign_in' do
+      let(:action) { delete :destroy, id: 1 }
     end
   end
 end
