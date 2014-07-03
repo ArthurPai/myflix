@@ -1,10 +1,7 @@
 require 'spec_helper'
 
 describe VideosController do
-  let!(:user) { Fabricate(:user) }
-  before do
-    set_current_user user
-  end
+  before { set_current_user }
 
   describe 'GET index' do
     before { Fabricate.times(3, :category) }

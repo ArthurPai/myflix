@@ -1,15 +1,12 @@
 require 'spec_helper'
 
 describe QueueItemsController do
-  let(:user) { Fabricate(:user) }
-  before do
-    set_current_user user
-  end
+  before { set_current_user }
 
   describe 'GET index' do
     it 'sets the @queues to the queue items of the current user' do
-      item1 = Fabricate(:queue_item, list_order: 1, user: user)
-      item2 = Fabricate(:queue_item, list_order: 2, user: user)
+      item1 = Fabricate(:queue_item, list_order: 1, user: current_user)
+      item2 = Fabricate(:queue_item, list_order: 2, user: current_user)
       Fabricate(:queue_item)
 
       get :index
@@ -17,8 +14,8 @@ describe QueueItemsController do
     end
 
     it 'sets the @queue with order by the item list_order' do
-      item1 = Fabricate(:queue_item, list_order: 2, user: user)
-      item2 = Fabricate(:queue_item, list_order: 1, user: user)
+      item1 = Fabricate(:queue_item, list_order: 2, user: current_user)
+      item2 = Fabricate(:queue_item, list_order: 1, user: current_user)
       Fabricate(:queue_item)
 
       get :index
@@ -51,7 +48,7 @@ describe QueueItemsController do
         video = Fabricate(:video)
 
         post :create, video_id: video.id
-        expect(user.queue_items.count).to eq(1)
+        expect(current_user.queue_items.count).to eq(1)
       end
 
       it 'add queue item and association with the video' do
@@ -65,15 +62,15 @@ describe QueueItemsController do
         video = Fabricate(:video)
 
         post :create, video_id: video.id
-        expect(user.queue_items.first.list_order).to eq(1)
+        expect(current_user.queue_items.first.list_order).to eq(1)
       end
 
       it 'increases list order of queue item when add to non empty my queue' do
-        Fabricate(:queue_item, list_order: 1, user: user)
-        Fabricate(:queue_item, list_order: 2, user: user)
+        Fabricate(:queue_item, list_order: 1, user: current_user)
+        Fabricate(:queue_item, list_order: 2, user: current_user)
 
         post :create, video_id: Fabricate(:video).id
-        expect(user.queue_items.last.list_order).to eq(3)
+        expect(current_user.queue_items.last.list_order).to eq(3)
       end
 
       it 'does not effect list order of queue item by other user queue items' do
@@ -89,12 +86,12 @@ describe QueueItemsController do
     context 'when video is exist in the my queue' do
       let(:video) { Fabricate(:video) }
       before(:each) do
-        Fabricate(:queue_item, list_order: 1, video: video, user: user)
+        Fabricate(:queue_item, list_order: 1, video: video, user: current_user)
       end
 
       it 'does not add same video to the my queue' do
         post :create, video_id: video.id
-        expect(user.queue_items.count).to eq(1)
+        expect(current_user.queue_items.count).to eq(1)
       end
 
       it 'redirect to my queue page' do
@@ -110,9 +107,9 @@ describe QueueItemsController do
   end
 
   describe 'PATCH update' do
-    let!(:queue_item1) { Fabricate(:queue_item, list_order: 1, user: user) }
-    let!(:queue_item2) { Fabricate(:queue_item, list_order: 2, user: user) }
-    let!(:queue_item3) { Fabricate(:queue_item, list_order: 3, user: user) }
+    let!(:queue_item1) { Fabricate(:queue_item, list_order: 1, user: current_user) }
+    let!(:queue_item2) { Fabricate(:queue_item, list_order: 2, user: current_user) }
+    let!(:queue_item3) { Fabricate(:queue_item, list_order: 3, user: current_user) }
 
     it 'redirect to my queue path' do
       patch :update, queue_items: [{ id: 1, list_order: 1 }]
@@ -148,7 +145,7 @@ describe QueueItemsController do
 
       context 'and re-rating the video' do
         it 'updates rating of review if the item association video has review' do
-          review = Fabricate(:review, rating: 1, video: queue_item1.video, user: user)
+          review = Fabricate(:review, rating: 1, video: queue_item1.video, user: current_user)
 
           patch :update, queue_items: [{ id: queue_item1.id, list_order: queue_item1.list_order, rating:4 } ]
           expect(QueueItem.find(review.id).rating).to eq(4)
@@ -220,13 +217,13 @@ describe QueueItemsController do
 
   describe 'DELETE destroy' do
     it 'redirect to queue items index page' do
-      queue_item = Fabricate(:queue_item, user: user)
+      queue_item = Fabricate(:queue_item, user: current_user)
       delete :destroy, id: queue_item.id
       expect(response).to redirect_to my_queue_path
     end
 
     it 'deletes the queue item' do
-      queue_item = Fabricate(:queue_item, user: user)
+      queue_item = Fabricate(:queue_item, user: current_user)
       delete :destroy, id: queue_item.id
       expect(QueueItem.count).to eq(0)
     end
@@ -248,18 +245,18 @@ describe QueueItemsController do
     it 'remove the video from the queue items of user' do
       Fabricate(:video)
       video2 = Fabricate(:video)
-      queue_item = Fabricate(:queue_item, video: video2, user: user)
+      queue_item = Fabricate(:queue_item, video: video2, user: current_user)
       delete :destroy, id: queue_item.id
-      expect(QueueItem.where(video_id: video2.id, user_id: user.id)).to eq([])
+      expect(QueueItem.where(video_id: video2.id, user_id: current_user.id)).to eq([])
     end
 
     it 'reorder all queue items of logged in user' do
       video1 = Fabricate(:video)
       video2 = Fabricate(:video)
       video3 = Fabricate(:video)
-      queue_item3 = Fabricate(:queue_item, list_order: 3, video: video3, user: user)
-      queue_item2 = Fabricate(:queue_item, list_order: 2, video: video2, user: user)
-      queue_item1 = Fabricate(:queue_item, list_order: 1, video: video1, user: user)
+      queue_item3 = Fabricate(:queue_item, list_order: 3, video: video3, user: current_user)
+      queue_item2 = Fabricate(:queue_item, list_order: 2, video: video2, user: current_user)
+      queue_item1 = Fabricate(:queue_item, list_order: 1, video: video1, user: current_user)
 
       delete :destroy, id: queue_item2.id
       expect(QueueItem.find(queue_item1.id).list_order).to eq(1)

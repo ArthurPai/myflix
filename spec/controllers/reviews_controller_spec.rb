@@ -1,11 +1,8 @@
 require 'spec_helper'
 
 describe ReviewsController do
-  let(:user) { Fabricate(:user) }
   let(:video) { Fabricate(:video) }
-  before do
-    set_current_user user
-  end
+  before { set_current_user }
 
   describe 'POST create' do
     context 'with valid input' do
@@ -26,7 +23,7 @@ describe ReviewsController do
       end
 
       it 'creates a review association with current user' do
-        expect(Review.first.user).to eq(user)
+        expect(Review.first.user).to eq(current_user)
       end
     end
 
