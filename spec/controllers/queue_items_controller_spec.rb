@@ -72,7 +72,7 @@ describe QueueItemsController do
           queue_item = Fabricate(:queue_item, list_order: 1, video: video, user: other_user)
 
           post :create, video_id: video.id
-          expect(QueueItem.find(queue_item.id)).not_to eq(2)
+          expect(QueueItem.find(queue_item.id).list_order).to eq(1)
         end
       end
 
