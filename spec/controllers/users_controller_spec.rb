@@ -48,7 +48,7 @@ describe UsersController do
 
   context 'with authenticated user' do
     before do
-      login Fabricate(:user)
+      set_current_user Fabricate(:user)
     end
 
     describe 'GET new' do

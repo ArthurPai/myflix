@@ -5,7 +5,7 @@ describe QueueItemsController do
   context 'with authenticated user' do
     let(:user) { Fabricate(:user) }
     before do
-      login user
+      set_current_user user
     end
 
     describe 'GET index' do

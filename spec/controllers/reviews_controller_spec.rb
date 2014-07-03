@@ -14,7 +14,7 @@ describe ReviewsController do
     let(:user) { Fabricate(:user) }
     let(:video) { Fabricate(:video) }
     before do
-      login user
+      set_current_user user
     end
 
     describe 'POST create' do

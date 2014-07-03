@@ -55,7 +55,7 @@ describe SessionsController do
   end
 
   context 'with authenticated user' do
-    before { login user }
+    before { set_current_user user }
 
     describe 'GET new' do
       before { get :new }
