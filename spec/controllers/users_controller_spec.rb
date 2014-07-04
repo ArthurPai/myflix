@@ -47,9 +47,7 @@ describe UsersController do
   end
 
   context 'with authenticated user' do
-    before do
-      login Fabricate(:user)
-    end
+    before { set_current_user }
 
     describe 'GET new' do
       it 'redirect to home path' do

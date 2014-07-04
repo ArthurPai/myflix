@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe SessionsController do
-  let(:user) { Fabricate(:user) }
-
   context 'with unauthenticated user' do
+    let(:user) { Fabricate(:user) }
+
     describe 'GET new' do
       it 'render new template' do
         get :new
@@ -55,7 +55,7 @@ describe SessionsController do
   end
 
   context 'with authenticated user' do
-    before { login user }
+    before { set_current_user }
 
     describe 'GET new' do
       before { get :new }
@@ -70,7 +70,7 @@ describe SessionsController do
     end
 
     describe 'POST create' do
-      before { post :create, {email: user.email, password: user.password} }
+      before { post :create, {email: 'someone', password: 'any'} }
 
       it 'will redirect to root path' do
         expect(response).to redirect_to home_path

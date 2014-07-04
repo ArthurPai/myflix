@@ -17,11 +17,18 @@ group :development do
   gem 'thin'
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'guard-rspec'
+  gem 'terminal-notifier-guard'
+  gem 'guard-livereload'
+  gem 'guard-pow', require: false
 end
 
 group :development, :test do
   gem 'rspec-rails', '2.99'
+  gem 'capybara'
+  gem 'launchy'
   gem 'pry'
+  gem 'pry-remote'
   gem 'pry-nav'
   gem 'faker'
   gem 'fabrication'
