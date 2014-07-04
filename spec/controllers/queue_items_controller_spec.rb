@@ -119,22 +119,12 @@ describe QueueItemsController do
     context 'with valid input' do
       it 'reorders the queue items' do
         patch :update, queue_items: [{ id: queue_item1.id, list_order: 2 }, { id: queue_item2.id, list_order: 1 }]
-        expect(QueueItem.find(queue_item1.id).list_order).to eq(2)
-        expect(QueueItem.find(queue_item2.id).list_order).to eq(1)
+        expect(current_user.queue_items).to eq([queue_item2, queue_item1, queue_item3])
       end
 
-      it 'normalize queue items that start order by 1' do
+      it 'normalize the queue items' do
         patch :update, queue_items: [{ id: queue_item1.id, list_order: 4 }]
-        expect(QueueItem.find(queue_item2.id).list_order).to eq(1)
-        expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
-        expect(QueueItem.find(queue_item1.id).list_order).to eq(3)
-      end
-
-      it 'normalize the queue items to continue order' do
-        patch :update, queue_items: [{ id: queue_item2.id, list_order: 4 }]
-        expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
-        expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
-        expect(QueueItem.find(queue_item2.id).list_order).to eq(3)
+        expect(current_user.queue_items).to eq([queue_item2, queue_item3, queue_item1])
       end
 
       context 'and re-rating the video' do
@@ -163,9 +153,7 @@ describe QueueItemsController do
       end
 
       it 'does not change the order of each queue items' do
-        expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
-        expect(QueueItem.find(queue_item2.id).list_order).to eq(2)
-        expect(QueueItem.find(queue_item3.id).list_order).to eq(3)
+        expect(current_user.queue_items).to eq([queue_item1, queue_item2, queue_item3])
       end
 
       it 'displays warning flash message' do
@@ -180,9 +168,7 @@ describe QueueItemsController do
       end
 
       it 'does not change the order of each queue items' do
-        expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
-        expect(QueueItem.find(queue_item2.id).list_order).to eq(2)
-        expect(QueueItem.find(queue_item3.id).list_order).to eq(3)
+        expect(current_user.queue_items).to eq([queue_item1, queue_item2, queue_item3])
       end
 
       it 'displays warning flash message' do
@@ -199,8 +185,7 @@ describe QueueItemsController do
       end
 
       it 'does not reorder' do
-        expect(QueueItem.find(queue_item4.id).list_order).to eq(1)
-        expect(QueueItem.find(queue_item5.id).list_order).to eq(2)
+        expect(other_user.queue_items).to eq([queue_item4, queue_item5])
       end
 
       it 'displays error flash message' do
@@ -253,8 +238,7 @@ describe QueueItemsController do
       queue_item1 = Fabricate(:queue_item, list_order: 1, video: video1, user: current_user)
 
       delete :destroy, id: queue_item2.id
-      expect(QueueItem.find(queue_item1.id).list_order).to eq(1)
-      expect(QueueItem.find(queue_item3.id).list_order).to eq(2)
+      expect(current_user.queue_items).to eq([queue_item1, queue_item3])
     end
 
     it_behaves_like 'require_sign_in' do
