@@ -109,6 +109,11 @@ kanbe = Video.create(
 
 arthur = User.create(email: 'arthur@intxtion.com', full_name: 'Arthur Pai', password: '1111', )
 moon = User.create(email: 'moon@intxtion.com', full_name: 'Moon', password: '1111', )
+kan = User.create(email: 'kan@intxtion.com', full_name: 'Kan', password: '1111', )
+kevin = User.create(email: 'kevin@intxtion.com', full_name: 'Kevin', password: '1111', )
+fiona = User.create(email: 'fiona@intxtion.com', full_name: 'Fiona', password: '1111', )
+mia = User.create(email: 'mia@intxtion.com', full_name: 'Mia', password: '1111', )
+vita = User.create(email: 'vita@intxtion.com', full_name: 'Vita', password: '1111', )
 
 [game_of_thrones, silicon_valley, mozu, kanbe, family_guy].each_with_index do |video, idx|
   Fabricate(:review, video: video, user: arthur, rating: 4, created_at: idx.days.ago)
@@ -122,4 +127,16 @@ end
   Fabricate(:review, video: video, user: moon, rating: 4, created_at: idx.days.ago)
   moon.queue_items.create(list_order: idx+1, video: video)
 end
+
+[kan, kevin].each do |people|
+  arthur.followed_users << people
+  fiona.followed_users << people
+  mia.followed_users << people
+end
+
+[moon, vita, fiona, mia].each do |people|
+  people.followed_users << arthur
+  arthur.followed_users << people
+end
+
 

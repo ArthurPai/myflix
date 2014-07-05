@@ -9,6 +9,12 @@ class User < ActiveRecord::Base
   has_many :queue_items, -> { order 'list_order asc' }
   has_many :reviews, -> { order 'created_at desc'}
 
+  has_many :fellowships, foreign_key: :follower_id
+  has_many :followed_users, through: :fellowships
+
+  has_many :inverse_fellowships, class_name: 'Fellowship', foreign_key: :followed_user_id
+  has_many :followers, through: :inverse_fellowships
+
   def normalize_queue_items
     queue_items.each_with_index do |queue_item, idx|
       queue_item.update(list_order: idx+1)
@@ -24,10 +30,13 @@ class User < ActiveRecord::Base
     queue_items.map(&:video).include?(video)
   end
 
+  def following?(user)
+    followed_users.include?(user)
+  end
+
   private
 
   def new_queue_order
     queue_items.count + 1
   end
-
 end

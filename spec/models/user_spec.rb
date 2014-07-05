@@ -10,6 +10,11 @@ describe User do
   it { should have_many(:queue_items) }
   it { should have_many(:reviews).order('created_at desc') }
 
+  it { should have_many(:fellowships).with_foreign_key('follower_id') }
+  it { should have_many(:followed_users).through(:fellowships) }
+  it { should have_many(:inverse_fellowships).class_name('Fellowship').with_foreign_key('followed_user_id') }
+  it { should have_many(:followers).through(:inverse_fellowships) }
+
   let(:user) { Fabricate(:user) }
   let(:video_1) { Fabricate(:video) }
   let(:video_2) { Fabricate(:video) }
@@ -31,7 +36,6 @@ describe User do
     expect(user.queue_items.count).to eq(1)
   end
 
-
   describe '#queued_video?' do
     before do
       Fabricate(:queue_item, list_order: 1, user: user, video: video_1)
@@ -41,4 +45,17 @@ describe User do
     it { expect(user.queued_video?(video_2)).to be_falsey }
   end
 
+  describe '#following?' do
+    let(:arthur) { Fabricate(:user) }
+    let(:mia) { Fabricate(:user) }
+
+    it 'return true if the user has following the other user' do
+      Fellowship.create(follower: arthur, followed_user: mia)
+      expect(arthur.following?(mia)).to be_truthy
+    end
+
+    it 'return false if the user not following the other user' do
+      expect(arthur.following?(mia)).to be_falsey
+    end
+  end
 end
