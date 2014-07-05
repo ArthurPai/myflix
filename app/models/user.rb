@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
     queue_items.map(&:video).include?(video)
   end
 
+  def can_follow?(user)
+    user && !(user == self || following?(user))
+  end
+
   def following?(user)
     followed_users.include?(user)
   end
