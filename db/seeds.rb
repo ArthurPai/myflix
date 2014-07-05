@@ -108,6 +108,7 @@ kanbe = Video.create(
     category: dramas)
 
 arthur = User.create(email: 'arthur@intxtion.com', full_name: 'Arthur Pai', password: '1111', )
+moon = User.create(email: 'moon@intxtion.com', full_name: 'Moon', password: '1111', )
 
 [game_of_thrones, silicon_valley, mozu, kanbe, family_guy].each_with_index do |video, idx|
   Fabricate(:review, video: video, user: arthur, rating: 4, created_at: idx.days.ago)
@@ -116,3 +117,9 @@ end
 [mozu, kanbe, futurama].each_with_index do |video, idx|
   arthur.queue_items.create(list_order: idx+1, video: video)
 end
+
+[south_park, futurama, family_guy].each_with_index do |video, idx|
+  Fabricate(:review, video: video, user: moon, rating: 4, created_at: idx.days.ago)
+  moon.queue_items.create(list_order: idx+1, video: video)
+end
+

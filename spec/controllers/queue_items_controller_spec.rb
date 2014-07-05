@@ -22,13 +22,13 @@ describe QueueItemsController do
       expect(assigns(:queue_items)).to eq([item2, item1])
     end
 
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { get :index }
     end
   end
 
   describe 'POST create' do
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { post :create, video_id: Fabricate(:video).id }
     end
 
@@ -112,7 +112,7 @@ describe QueueItemsController do
       expect(response).to redirect_to my_queue_path
     end
 
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { patch :update, queue_items: {} }
     end
 
@@ -241,7 +241,7 @@ describe QueueItemsController do
       expect(current_user.queue_items).to eq([queue_item1, queue_item3])
     end
 
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { delete :destroy, id: 1 }
     end
   end

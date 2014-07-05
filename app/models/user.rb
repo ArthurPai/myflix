@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   validates :full_name, presence: true
 
   has_many :queue_items, -> { order 'list_order asc' }
+  has_many :reviews, -> { order 'created_at desc'}
 
   def normalize_queue_items
     queue_items.each_with_index do |queue_item, idx|

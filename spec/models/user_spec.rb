@@ -8,6 +8,7 @@ describe User do
   it { should validate_uniqueness_of(:email) }
 
   it { should have_many(:queue_items) }
+  it { should have_many(:reviews).order('created_at desc') }
 
   let(:user) { Fabricate(:user) }
   let(:video_1) { Fabricate(:video) }
