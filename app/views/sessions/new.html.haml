@@ -4,7 +4,10 @@
       = bootstrap_form_tag url: login_path do |f|
         %header
           %h1 Sign in
-        = f.email_field :email, value: params[:email], label: 'Email Address'
-        = f.password_field :password
+        .row
+          .col-sm-4
+            = f.email_field :email, value: params[:email], label: 'Email Address'
+            = f.password_field :password
         = f.form_group do
           = f.submit 'Sign in'
+          = link_to 'Forgot Password?', forgot_password_path
