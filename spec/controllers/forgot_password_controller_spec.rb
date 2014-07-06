@@ -47,10 +47,26 @@ describe ForgotPasswordController do
       end
     end
 
+    context 'with blank input' do
+      before { post :create, email: '' }
+
+      it 'redirects to the forgot password path' do
+        expect(response).to redirect_to forgot_password_path
+      end
+
+      it 'displays error flash message' do
+        expect(flash[:danger]).not_to be_blank
+      end
+
+      it 'does not send out reset password email' do
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end
+    end
+    
     context 'with non-exist user email' do
       before { post :create, email: 'unknown@example.com' }
 
-      it 'renders again the forgot password new template' do
+      it 'redirects to the forgot password path' do
         expect(response).to redirect_to forgot_password_path
       end
 
