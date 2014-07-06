@@ -27,10 +27,6 @@ describe ForgotPasswordController do
         expect(response).to redirect_to confirm_password_reset_path
       end
 
-      it 'creates reset password token' do
-        expect(john.reload.reset_password_token).not_to be_nil
-      end
-
       it 'send out rest password email to the user' do
         expect(ActionMailer::Base.deliveries).not_to be_empty
       end
@@ -62,7 +58,7 @@ describe ForgotPasswordController do
         expect(ActionMailer::Base.deliveries).to be_empty
       end
     end
-    
+
     context 'with non-exist user email' do
       before { post :create, email: 'unknown@example.com' }
 

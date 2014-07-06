@@ -2,65 +2,97 @@ require 'spec_helper'
 
 describe ResetPasswordController do
   describe 'GET new' do
-    let!(:john) { Fabricate(:user, email: 'john@intxtion.com', password: 'password', reset_password_token: SecureRandom.urlsafe_base64) }
-    let!(:jane) { Fabricate(:user, email: 'jane@intxtion.com', password: 'password', reset_password_token: nil) }
+    let!(:john) { Fabricate(:user, email: 'john@intxtion.com', password: 'password') }
+    before do
+      john.update_column(:reset_password_token, '123456')
+    end
 
     it 'redirects to invalid token page if reset password token is nil' do
       get :new
       expect(response).to redirect_to invalid_token_path
     end
 
-    it 'redirects to invalid token page if reset password token is invalid' do
-      get :new, reset_token: 'wrong password'
+    it 'redirects to invalid token page if reset password token is blank' do
+      get :new, reset_token: ''
       expect(response).to redirect_to invalid_token_path
     end
 
-    it 'sets @reset_token variable if reset password token is valid' do
-      get :new, reset_token: john.reset_password_token
-      expect(assigns(:reset_token)).to eq(john.reset_password_token)
+    it 'redirects to invalid token page if reset password token is invalid' do
+      get :new, reset_token: 'wrong token'
+      expect(response).to redirect_to invalid_token_path
     end
 
-    it 'render new template if reset password token is valid' do
-      get :new, reset_token: john.reset_password_token
-      expect(response).to render_template :new
+    context 'with valid reset password token' do
+      before { get :new, reset_token: '123456' }
+
+      it 'sets @reset_token variable' do
+        expect(assigns(:reset_token)).to eq('123456')
+      end
+
+      it 'render new template' do
+        expect(response).to render_template :new
+      end
     end
   end
 
   describe 'POST create' do
-    let!(:john) { Fabricate(:user, email: 'john@intxtion.com', password: 'password', reset_password_token: SecureRandom.urlsafe_base64) }
-    let!(:jane) { Fabricate(:user, email: 'jane@intxtion.com', password: 'password', reset_password_token: nil) }
+    let!(:john) { Fabricate(:user, email: 'john@intxtion.com', password: 'password') }
+    before do
+      john.update_column(:reset_password_token, '123456')
+    end
 
     context 'with valid password' do
+      before { post :create, reset_token: '123456', password: 'new_password' }
+
       it 'redirect to sign in page' do
-        post :create, reset_token: john.reset_password_token, password: 'newpassword'
         expect(response).to redirect_to login_path
       end
 
-      it 'changes password' do
-        old_password = john.password_digest
-        post :create, reset_token: john.reset_password_token, password: 'newpassword'
-        expect(john.reload.password_digest).not_to eq(old_password)
+      it "changes the user's password" do
+        expect(john.reload.authenticate('new_password')).to be_truthy
       end
 
-      it 'removes the reset password token' do
-        post :create, reset_token: john.reset_password_token, password: 'newpassword'
-        expect(john.reload.reset_password_token).to be_nil
+      it 'sets the success flash message' do
+        expect(flash[:success]).not_to be_blank
+      end
+
+      it 're-generates the reset password token' do
+        expect(john.reload.reset_password_token).not_to eq('123456')
       end
     end
 
-    it 'redirects to invalid token page if reset password token is invalid' do
-      post :create, reset_token: SecureRandom.urlsafe_base64, password: 'newpassword'
+    it 'redirects to invalid token page if reset password token is expire' do
+      post :create, reset_token: '1234', password: 'new_password'
       expect(response).to redirect_to invalid_token_path
     end
 
     it 'redirects to invalid token page if reset password token is nil' do
-      post :create, password: 'newpassword'
+      post :create, password: 'new_password'
       expect(response).to redirect_to invalid_token_path
     end
 
-    it 'redirects to reset password path when user submit invalid password' do
-      post :create, reset_token: john.reset_password_token, password: 'new'
-      expect(response).to redirect_to reset_password_path
+    context 'with invalid password' do
+      before { post :create, reset_token: '123456', password: 'new' }
+
+      it 'redirects to reset password path when user submit ' do
+        expect(response).to redirect_to reset_password_path(reset_token: '123456')
+      end
+
+      it 'sets warning flash message' do
+        expect(flash[:warning]).not_to be_blank
+      end
+    end
+
+    context 'with blank password' do
+      before { post :create, reset_token: '123456', password: '' }
+
+      it 'redirects to reset password path' do
+        expect(response).to redirect_to reset_password_path(reset_token: '123456')
+      end
+
+      it 'sets warning flash message' do
+        expect(flash[:warning]).not_to be_blank
+      end
     end
   end
 end
