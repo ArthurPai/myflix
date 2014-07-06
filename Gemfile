@@ -11,6 +11,7 @@ gem 'jquery-rails'
 gem 'bootstrap_form'
 
 gem 'bcrypt'
+gem 'figaro'
 
 group :development do
   gem 'sqlite3'
@@ -21,6 +22,7 @@ group :development do
   gem 'terminal-notifier-guard'
   gem 'guard-livereload'
   gem 'guard-pow', require: false
+  gem 'letter_opener'
 end
 
 group :development, :test do
