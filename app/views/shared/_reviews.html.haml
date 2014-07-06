@@ -1,0 +1,19 @@
+- show_title = false if show_title.nil?
+- show_writer = true if show_writer.nil?
+%ul
+  - reviews.each do |review|
+    %article.review
+      %li.row
+        .col-sm-2
+          - if show_title
+            %p
+              = link_to "\"#{review.video.title}\"", review.video
+          %span Rating: #{review.rating} / 5
+          - if show_writer
+            %p
+              by
+              = link_to review.user.full_name, review.user
+            %span
+              %small #{time_ago_in_words(review.created_at)} ago
+        .col-sm-8
+          %p= review.content

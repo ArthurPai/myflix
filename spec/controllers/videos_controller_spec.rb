@@ -11,7 +11,7 @@ describe VideosController do
       expect(assigns(:categories)).to eq(Category.all)
     end
 
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { get :index }
     end
   end
@@ -36,7 +36,7 @@ describe VideosController do
       expect(assigns(:reviews)).to eq([review_new, review_old])
     end
 
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { get :show, id: 0 }
     end
   end
@@ -49,7 +49,7 @@ describe VideosController do
       expect(assigns(:videos)).to eq([monk])
     end
 
-    it_behaves_like 'require_sign_in' do
+    it_behaves_like 'require sign in' do
       let(:action) { get :search, search: '' }
     end
   end
