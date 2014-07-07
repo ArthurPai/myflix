@@ -15,6 +15,8 @@ class User < ActiveRecord::Base
   has_many :inverse_fellowships, class_name: 'Fellowship', foreign_key: :followed_user_id
   has_many :followers, through: :inverse_fellowships
 
+  after_create :generate_reset_password_token
+
   def normalize_queue_items
     queue_items.each_with_index do |queue_item, idx|
       queue_item.update(list_order: idx+1)
@@ -36,6 +38,10 @@ class User < ActiveRecord::Base
 
   def following?(user)
     followed_users.include?(user)
+  end
+
+  def generate_reset_password_token
+    update_column(:reset_password_token, SecureRandom.urlsafe_base64)
   end
 
   private

@@ -11,6 +11,7 @@ class UsersController < ApplicationController
 
     if @user.save
       flash[:success] = 'Register Succeed.'
+      UserMailer.welcome_email(@user).deliver
       sign_in @user
       redirect_to home_path
     else
@@ -27,4 +28,5 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:email, :password, :full_name)
     end
+
 end
