@@ -20,6 +20,11 @@ describe User do
     expect(user.reset_password_token).to be_present
   end
 
+  it 'generates a invitation token when created' do
+    user = Fabricate(:user)
+    expect(user.invitation_token).to be_present
+  end
+
   let(:user) { Fabricate(:user) }
   let(:video_1) { Fabricate(:video) }
   let(:video_2) { Fabricate(:video) }

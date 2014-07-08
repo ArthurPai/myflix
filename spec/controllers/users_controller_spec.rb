@@ -8,12 +8,44 @@ describe UsersController do
         get :new
         expect(assigns(:user)).to be_instance_of(User)
       end
+
+      context 'when user is invitation by friend' do
+        let!(:john) { Fabricate(:user, full_name: 'john doe', email: 'john@example.com') }
+        before do
+          john.update_column(:invitation_token, '123456')
+        end
+
+        context 'with valid invitation' do
+          before { get :new, invitation_token: '123456', email: 'jane@example.com' }
+
+          it 'sets email to @user variable' do
+            expect(assigns(:user).email).to eq('jane@example.com')
+          end
+
+          it 'sets @invitation_token variable' do
+            expect(assigns(:invitation_token)).to eq('123456')
+          end
+        end
+
+        context 'with invalid invitation' do
+          before { get :new, invitation_token: '1234', email: 'jane@example.com' }
+
+          it 'does not set email to @user variable' do
+            expect(assigns(:user).email).to be_nil
+          end
+
+          it 'does not set @invitation_token variable' do
+            expect(assigns(:invitation_token)).to be_nil
+          end
+        end
+      end
     end
 
     describe 'POST create' do
       context 'with valid input' do
         let(:user) { Fabricate.attributes_for(:user) }
         before { post :create, user: user }
+        after { ActionMailer::Base.deliveries.clear }
 
         it 'saves user in database' do
           expect(User.count).to eq(1)
@@ -26,6 +58,51 @@ describe UsersController do
         it 'auto login user' do
           # expect(controller.current_user).to eq(User.find_by(email: user['email']))
           expect(session[:user_id]).to eq(User.find_by(email: user['email']).id)
+        end
+      end
+
+      context 'when user is invitation by friend' do
+        let!(:john) { Fabricate(:user, full_name: 'john doe', email: 'john@example.com') }
+        before do
+          john.update_column(:invitation_token, '123456')
+        end
+        after { ActionMailer::Base.deliveries.clear }
+
+        context 'with valid invitation' do
+          context 'and valid input' do
+            let!(:jane) { Fabricate.attributes_for(:user) }
+            before { post :create, user: jane, invitation_token: '123456' }
+
+            it 'makes the user following inviter' do
+              expect(john.reload.followers).to eq([User.last])
+            end
+
+            it 'makes inviter following the user' do
+              expect(User.last.followers).to eq([john])
+            end
+          end
+
+          context 'but invalid input' do
+            let!(:jane) { Fabricate.attributes_for(:user, email: '') }
+            before { post :create, user: jane, invitation_token: '123456' }
+
+            it 'sets @invitation_token variable' do
+              expect(assigns(:invitation_token)).to eq('123456')
+            end
+          end
+        end
+
+        context 'with invalid invitation' do
+          let!(:jane) { Fabricate.attributes_for(:user) }
+          before { post :create, user: jane, invitation_token: '1234' }
+
+          it 'does not make the user following inviter' do
+            expect(john.reload.followers).not_to include(User.last)
+          end
+
+          it 'does not make inviter following the user' do
+            expect(User.last.followers).not_to include(john)
+          end
         end
       end
 
@@ -45,8 +122,8 @@ describe UsersController do
       end
 
       context 'email sending' do
-        after { ActionMailer::Base.deliveries.clear }
         let(:fiona) { Fabricate.attributes_for(:user, email: 'fiona@intxtion.com', full_name: 'Fiona Cheng') }
+        after { ActionMailer::Base.deliveries.clear }
 
         it 'send out the email to the user when valid input' do
           post :create, user: fiona

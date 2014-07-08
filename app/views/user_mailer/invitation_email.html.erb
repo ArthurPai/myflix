@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+</head>
+<body>
+<h1>Hello, <%= @name %></h1>
+<p>
+  Your friend <%= @inviter.full_name %> invite you: <br><br>
+  <%= h(@message).gsub("\n", '<br>').html_safe %>
+</p>
+<p>You can sign up from this link: <%= link_to 'Sign Up', @sign_up_url  %></p>
+</body>
+</html>

@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   has_many :followers, through: :inverse_fellowships
 
   after_create :generate_reset_password_token
+  after_create :generate_invitation_token
 
   def normalize_queue_items
     queue_items.each_with_index do |queue_item, idx|
@@ -42,6 +43,10 @@ class User < ActiveRecord::Base
 
   def generate_reset_password_token
     update_column(:reset_password_token, SecureRandom.urlsafe_base64)
+  end
+
+  def generate_invitation_token
+    update_column(:invitation_token, SecureRandom.urlsafe_base64)
   end
 
   private

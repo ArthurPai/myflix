@@ -4,3 +4,7 @@ def sign_in_user(email, password)
   fill_in 'Password', with: password
   click_button 'Sign in'
 end
+
+def sign_out_user
+  click_link 'Sign Out'
+end

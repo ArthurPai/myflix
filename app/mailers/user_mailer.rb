@@ -11,4 +11,13 @@ class UserMailer < ActionMailer::Base
     @reset_path = reset_password_url(reset_token: @user.reset_password_token)
     mail(to: @user.email, subject: 'Arthur Flex Password Reset')
   end
+
+  def invitation_email(inviter, name, email, message)
+    @inviter = inviter
+    @name = name
+    @message = message
+    @sign_up_url = register_url(invitation_token: @inviter.invitation_token, email: email)
+
+    mail(to: email, subject: 'Arthur Flix Invitation')
+  end
 end
