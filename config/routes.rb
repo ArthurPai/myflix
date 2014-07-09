@@ -20,6 +20,9 @@ Myflix::Application.routes.draw do
   patch '/update_queue', to: 'queue_items#update'
   get '/people', to: 'fellowships#index'
 
+  get '/invite', to: 'invitations#new'
+  post '/invite', to: 'invitations#create'
+
   resources :users, only: [:create, :show]
   resources :videos, only: [:index, :show] do
     collection do
