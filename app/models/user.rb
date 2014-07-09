@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  include Tokenable
   has_secure_password validations: false
 
   validates :email, presence: true, uniqueness: true
@@ -15,7 +16,7 @@ class User < ActiveRecord::Base
   has_many :inverse_fellowships, class_name: 'Fellowship', foreign_key: :followed_user_id
   has_many :followers, through: :inverse_fellowships
 
-  after_create :generate_reset_password_token
+  tokenable_column :reset_password_token
   after_create :generate_invitation_token
 
   def normalize_queue_items
@@ -39,10 +40,6 @@ class User < ActiveRecord::Base
 
   def following?(user)
     followed_users.include?(user)
-  end
-
-  def generate_reset_password_token
-    update_column(:reset_password_token, SecureRandom.urlsafe_base64)
   end
 
   def generate_invitation_token

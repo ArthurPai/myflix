@@ -15,9 +15,8 @@ describe User do
   it { should have_many(:inverse_fellowships).class_name('Fellowship').with_foreign_key('followed_user_id') }
   it { should have_many(:followers).through(:inverse_fellowships) }
 
-  it 'generates a reset password token when created' do
-    user = Fabricate(:user)
-    expect(user.reset_password_token).to be_present
+  it_behaves_like 'tokenable' do
+    let(:object) { Fabricate(:user) }
   end
 
   it 'generates a invitation token when created' do

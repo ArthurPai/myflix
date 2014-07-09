@@ -14,7 +14,7 @@ class ResetPasswordController < ApplicationController
     user.password = password
     if password.present? && user.save
       flash[:success] = 'Your password is changed. Please sign in with new password.'
-      user.generate_reset_password_token
+      user.generate_token
       redirect_to login_path
     else
       flash[:warning] = password.blank? ? "Password can't blank" : 'Password is invalid'
