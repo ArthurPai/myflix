@@ -17,5 +17,9 @@
 # Ignore other unneeded files
 .DS_Store
 .idea
+
 # Ignore application configuration
 /config/application.yml
+
+# Ignore local environment
+.env
