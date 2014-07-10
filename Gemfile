@@ -19,6 +19,7 @@ gem 'slim'
 
 gem 'unicorn'
 gem 'sentry-raven'
+gem 'paratrooper'
 
 group :development do
   gem 'sqlite3'
@@ -49,7 +50,7 @@ group :test do
   gem 'database_cleaner', '1.2.0'
 end
 
-group :production do
+group :production, :staging do
   gem 'pg'
   gem 'rails_12factor'
 end
