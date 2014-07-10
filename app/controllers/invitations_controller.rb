@@ -10,7 +10,7 @@ class InvitationsController < ApplicationController
       flash.now[:danger] = 'There are some input invalid! Please check your input.'
       render :new
     else
-      UserMailer.invitation_email(current_user, name, email, message).deliver
+      UserMailer.delay.invitation_email(current_user, name, email, message)
       flash[:success] = 'Invite is send to your friend'
       redirect_to invite_path
     end

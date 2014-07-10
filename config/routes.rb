@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Myflix::Application.routes.draw do
   get 'ui(/:action)', controller: 'ui'
 
@@ -34,4 +36,6 @@ Myflix::Application.routes.draw do
   resources :categories, only: [:show]
   resources :queue_items, only: [:create, :destroy]
   resources :fellowships, only: [:create, :destroy]
+
+  mount Sidekiq::Web, at: '/sidekiq'
 end

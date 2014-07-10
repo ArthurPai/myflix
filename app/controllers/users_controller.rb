@@ -18,7 +18,7 @@ class UsersController < ApplicationController
 
     if @user.save
       flash[:success] = 'Register Succeed.'
-      UserMailer.welcome_email(@user).deliver
+      UserMailer.delay.welcome_email(@user)
       handle_invitation
       sign_in @user
       redirect_to home_path

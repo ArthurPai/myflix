@@ -13,6 +13,10 @@ gem 'bootstrap_form'
 gem 'bcrypt'
 gem 'figaro'
 
+gem 'sidekiq'
+gem 'sinatra', require: false
+gem 'slim'
+
 group :development do
   gem 'sqlite3'
   gem 'thin'
