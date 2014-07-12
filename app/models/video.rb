@@ -3,9 +3,8 @@ class Video < ActiveRecord::Base
   has_many :reviews, -> { order 'created_at desc' }
   has_many :queue_items
 
-  validates :title, presence: true
-  validates :description, presence: true
-  # TODO need presence category?
+  validates_presence_of :title, :description, :category
+  validates_associated :category
 
   def self.search_by_title(search_title)
     return [] if search_title.blank?
