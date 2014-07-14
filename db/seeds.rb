@@ -9,7 +9,7 @@
 
 arthur = Fabricate(:admin, email: 'arthur@intxtion.com', full_name: 'Arthur Pai')
 
-unless Rails.env.production? && Rails.env.staging?
+unless Rails.env.production? || Rails.env.staging?
   moon   = Fabricate(:user, email: 'moon@intxtion.com', full_name: 'Moon')
   kan    = Fabricate(:user, email: 'kan@intxtion.com', full_name: 'Kan')
   kevin  = Fabricate(:user, email: 'kevin@intxtion.com', full_name: 'Kevin')
