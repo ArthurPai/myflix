@@ -13,7 +13,13 @@
             = f.text_field :title, control_col: 'col-sm-3'
             = f.select :category_id, options_for_select( @categorys.map { |category| [category.name, category.id] }, @categorys.first.id)
             = f.text_area :description, rows: 8
-            = f.file_field :large_cover_url, label: 'Large Cover', class: 'form-control'
-            = f.file_field :small_cover_url, label: 'Small Cover', class: 'form-control'
+            = f.form_group do
+              = image_tag(@video.large_cover, size: '266x150', alt: 'large cover') if @video.large_cover?
+            = f.file_field :large_cover, label: 'Large Cover', class: 'form-control'
+            = f.hidden_field :large_cover_cache
+            = f.form_group do
+              = image_tag(@video.small_cover, size: '166x236', alt: 'small cover') if @video.small_cover?
+            = f.file_field :small_cover, label: 'Small Cover', class: 'form-control'
+            = f.hidden_field :small_cover_cache
           = f.form_group class: 'actions' do
             = f.submit 'Add Video'

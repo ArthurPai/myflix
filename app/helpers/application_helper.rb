@@ -1,11 +1,11 @@
 module ApplicationHelper
 
   def video_large_cover(video)
-    video.large_cover_url || 'holder.js/665x375/#000:#fff/text:Large Cover'
+    video.large_cover || 'holder.js/665x375/#000:#fff/text:Large Cover'
   end
 
   def video_small_cover(video)
-    video.small_cover_url || 'holder.js/166x236/sky/text:Cover'
+    video.small_cover || 'holder.js/166x236/sky/text:Cover'
   end
 
   def options_for_video_review(selected=nil)
