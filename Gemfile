@@ -10,6 +10,9 @@ gem 'uglifier'
 gem 'jquery-rails'
 gem 'bootstrap_form'
 
+gem 'faker'
+gem 'fabrication'
+
 gem 'bcrypt'
 gem 'figaro'
 
@@ -44,8 +47,6 @@ group :development, :test do
   gem 'pry'
   gem 'pry-remote'
   gem 'pry-nav'
-  gem 'faker'
-  gem 'fabrication'
 end
 
 group :test do
