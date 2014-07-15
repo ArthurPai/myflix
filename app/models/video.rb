@@ -5,7 +5,7 @@ class Video < ActiveRecord::Base
   mount_uploader :small_cover, VideoSmallCoverUploader
   mount_uploader :large_cover, VideoLargeCoverUploader
 
-  validates_presence_of :title, :description, :category, :small_cover
+  validates_presence_of :title, :description, :category
   validates_associated :category
 
   def self.search_by_title(search_title)
