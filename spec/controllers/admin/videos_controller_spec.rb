@@ -6,14 +6,8 @@ describe Admin::VideosController do
       let(:action) { get :new }
     end
 
-    context 'regular user' do
-      before do
-        set_current_user
-        get :new
-      end
-
-      it { expect(response).to redirect_to home_path }
-      it { expect(flash[:danger]).not_to be_blank }
+    it_behaves_like 'require admin' do
+      let(:action) { get :new }
     end
 
     context 'administrator' do
@@ -41,14 +35,8 @@ describe Admin::VideosController do
       let(:action) { post :create, video: Fabricate.attributes_for(:video) }
     end
 
-    context 'regular user' do
-      before do
-        set_current_user
-        post :create, video: Fabricate.attributes_for(:video)
-      end
-
-      it { expect(response).to redirect_to home_path }
-      it { expect(flash[:danger]).not_to be_blank }
+    it_behaves_like 'require admin' do
+      let(:action) { post :create, video: Fabricate.attributes_for(:video) }
     end
 
     context 'administrator' do
@@ -58,7 +46,7 @@ describe Admin::VideosController do
         let!(:category) { Fabricate(:category) }
         let(:video) { Fabricate.attributes_for(:video, category: category) }
 
-        it 'redirects to new_admin_videos path' do
+        it 'redirects to the new video page' do
           post :create, video: video
           expect(response).to redirect_to new_admin_video_path
         end
