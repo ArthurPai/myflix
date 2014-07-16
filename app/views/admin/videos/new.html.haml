@@ -21,5 +21,6 @@
               = image_tag(@video.small_cover, size: '166x236', alt: 'small cover') if @video.small_cover?
             = f.file_field :small_cover, label: 'Small Cover', class: 'form-control'
             = f.hidden_field :small_cover_cache
+            = f.text_field :video_url, label: 'Video URL'
           = f.form_group class: 'actions' do
             = f.submit 'Add Video'

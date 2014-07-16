@@ -2,7 +2,8 @@
   .container
     .row
       .video_large_cover.col-sm-7.col-sm-offset-1
-        %img(src="#{video_large_cover(@video)}" width=665 height=375)
+        = video_tag(@video.video_url, id: 'video', size: '665x375', poster: "#{video_large_cover(@video)}")
+        -#%img(src="#{video_large_cover(@video)}" width=665 height=375)
       .video_info.col-sm-3
         %header
           %h3= @video.title
@@ -10,6 +11,7 @@
         %p= @video.description
         - unless current_user.queued_video?(@video)
           .actions
+            = link_to 'Watch Now', '', id:'play_video_btn', class: 'btn btn-primary'
             = link_to '+ My Queue', queue_items_path(video_id: @video), method: 'post', class: 'btn btn-default'
 
 %section.reviews.container
