@@ -37,5 +37,9 @@ Myflix::Application.routes.draw do
   resources :queue_items, only: [:create, :destroy]
   resources :fellowships, only: [:create, :destroy]
 
+  namespace :admin do
+    resources :videos, only: [:new, :create]
+  end
+
   mount Sidekiq::Web, at: '/sidekiq'
 end

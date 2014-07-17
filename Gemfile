@@ -10,6 +10,9 @@ gem 'uglifier'
 gem 'jquery-rails'
 gem 'bootstrap_form'
 
+gem 'faker'
+gem 'fabrication'
+
 gem 'bcrypt'
 gem 'figaro'
 
@@ -20,6 +23,10 @@ gem 'slim'
 gem 'unicorn'
 gem 'sentry-raven'
 gem 'paratrooper'
+
+gem 'carrierwave'
+gem 'mini_magick'
+gem 'fog'
 
 group :development do
   gem 'sqlite3'
@@ -40,8 +47,6 @@ group :development, :test do
   gem 'pry'
   gem 'pry-remote'
   gem 'pry-nav'
-  gem 'faker'
-  gem 'fabrication'
 end
 
 group :test do

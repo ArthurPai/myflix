@@ -8,6 +8,7 @@ describe Video do
 
   it { should validate_presence_of(:title) }
   it { should validate_presence_of(:description) }
+  it { should validate_presence_of(:category) }
 
   describe 'search by title' do
     let!(:monk)       { Fabricate(:video, title: 'Monk', created_at: 2.days.ago) }

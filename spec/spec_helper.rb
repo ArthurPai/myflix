@@ -64,4 +64,10 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.include ControllerMacros, type: :controller
+
+  config.after(:all) do
+    if Rails.env.test? || Rails.env.cucumber?
+      FileUtils.rm_rf(Dir["#{Rails.root}/spec/support/uploads"])
+    end
+  end
 end
