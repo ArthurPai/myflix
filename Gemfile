@@ -55,6 +55,8 @@ group :test do
   gem 'shoulda-matchers'
   gem 'capybara-email', github: 'dockyard/capybara-email'
   gem 'database_cleaner', '1.2.0'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :production, :staging do
