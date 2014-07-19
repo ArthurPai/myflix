@@ -42,9 +42,38 @@ describe UsersController do
     end
 
     describe 'POST create' do
-      context 'with valid input' do
+      context 'with valid personal info and a declined card' do
         let(:user) { Fabricate.attributes_for(:user) }
-        before { post :create, user: user }
+        before do
+          charge = double('charge')
+          allow(charge).to receive(:successfully?).and_return(false)
+          allow(charge).to receive(:error_message).and_return('Your card was declined.')
+          expect(StripeWrapper::Charge).to receive(:create).and_return(charge)
+          post :create, user: user, stripeToken: '1234567'
+        end
+        after { ActionMailer::Base.deliveries.clear }
+
+        it 'does not save user in database' do
+          expect(User.count).to eq(0)
+        end
+
+        it 'render again new template' do
+          expect(response).to render_template :new
+        end
+
+        it 'sets flash error message' do
+          expect(flash[:danger]).to eq('Your card was declined.')
+        end
+      end
+
+      context 'with personal info and valid credit card' do
+        let(:user) { Fabricate.attributes_for(:user) }
+        before do
+          charge = double('charge')
+          allow(charge).to receive(:successfully?).and_return(true)
+          expect(StripeWrapper::Charge).to receive(:create).and_return(charge)
+          post :create, user: user
+        end
         after { ActionMailer::Base.deliveries.clear }
 
         it 'saves user in database' do
@@ -64,6 +93,9 @@ describe UsersController do
       context 'when user is invitation by friend' do
         let!(:john) { Fabricate(:user, full_name: 'john doe', email: 'john@example.com') }
         before do
+          charge = double('charge')
+          allow(charge).to receive(:successfully?).and_return(true)
+          allow(StripeWrapper::Charge).to receive(:create).and_return(charge)
           john.update_column(:invitation_token, '123456')
         end
         after { ActionMailer::Base.deliveries.clear }
@@ -106,23 +138,35 @@ describe UsersController do
         end
       end
 
-      context 'with invalid input' do
-        before { post :create, user: {email: ''} }
+      context 'with invalid personal info' do
         it 'does not saves user in database' do
+          post :create, user: {email: ''}
           expect(User.count).to eq(0)
         end
 
         it 'render again new template' do
+          post :create, user: {email: ''}
           expect(response).to render_template :new
         end
 
         it 'sets @user variable' do
+          post :create, user: {email: ''}
           expect(assigns(:user)).to be_instance_of(User)
+        end
+
+        it 'does not charge the card' do
+          expect(StripeWrapper::Charge).not_to receive(:create)
+          post :create, user: {email: ''}
         end
       end
 
       context 'email sending' do
         let(:fiona) { Fabricate.attributes_for(:user, email: 'fiona@intxtion.com', full_name: 'Fiona Cheng') }
+        before do
+          charge = double('charge')
+          allow(charge).to receive(:successfully?).and_return(true)
+          allow(StripeWrapper::Charge).to receive(:create).and_return(charge)
+        end
         after { ActionMailer::Base.deliveries.clear }
 
         it 'send out the email to the user when valid input' do

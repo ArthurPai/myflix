@@ -57,6 +57,7 @@ group :test do
   gem 'database_cleaner', '1.2.0'
   gem 'vcr'
   gem 'webmock'
+  gem 'selenium-webdriver'
 end
 
 group :production, :staging do
