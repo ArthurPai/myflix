@@ -54,7 +54,7 @@ end
 group :test do
   gem 'shoulda-matchers'
   gem 'capybara-email', github: 'dockyard/capybara-email'
-  gem 'database_cleaner', git: 'git@github.com:bmabey/database_cleaner.git'
+  gem 'database_cleaner', github: 'bmabey/database_cleaner'
   gem 'vcr'
   gem 'webmock'
   gem 'selenium-webdriver'
