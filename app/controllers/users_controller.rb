@@ -27,7 +27,7 @@ class UsersController < ApplicationController
         sign_in @user
         redirect_to home_path
       else
-        flash[:danger] = charge.error_message
+        flash.now[:danger] = charge.error_message
         render :new
       end
     else
