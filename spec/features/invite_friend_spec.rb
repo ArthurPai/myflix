@@ -36,7 +36,7 @@ feature 'User invite friend' do
     fill_in 'Credit Card Number', with: '4242424242424242'
     fill_in 'Security Code', with: '314'
     select '12 - December', from: 'date_month'
-    select '2018', from: 'date_year'
+    select 3.years.from_now.year, from: 'date_year'
     click_button 'Sign Up'
     expect(page).to have_content('Register Succeed.')
   end

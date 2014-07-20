@@ -69,20 +69,20 @@ feature 'User registers', { js: true, vcr: true } do
     fill_in 'Credit Card Number', with: '4242424242424242'
     fill_in 'Security Code', with: '314'
     select '12 - December', from: 'date_month'
-    select '2018', from: 'date_year'
+    select 3.years.from_now.year, from: 'date_year'
   end
 
   def fill_in_invalid_credit_card
     fill_in 'Credit Card Number', with: '1234'
     fill_in 'Security Code', with: '314'
     select '12 - December', from: 'date_month'
-    select '2018', from: 'date_year'
+    select 3.years.from_now.year, from: 'date_year'
   end
 
   def fill_in_declined_credit_card
     fill_in 'Credit Card Number', with: '4000000000000002'
     fill_in 'Security Code', with: '314'
     select '12 - December', from: 'date_month'
-    select '2018', from: 'date_year'
+    select 3.years.from_now.year, from: 'date_year'
   end
 end
