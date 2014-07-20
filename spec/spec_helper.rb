@@ -22,6 +22,7 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 ActiveRecord::Migration.maintain_test_schema!
 
 Capybara.server_port = 52662
+Capybara.javascript_driver = :webkit
 
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/cassettes'
@@ -73,6 +74,8 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/v/3-0/docs
   config.infer_spec_type_from_file_location!
 
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+
   config.include ControllerMacros, type: :controller
 
   config.after(:all) do
@@ -80,8 +83,6 @@ RSpec.configure do |config|
       FileUtils.rm_rf(Dir["#{Rails.root}/spec/support/uploads"])
     end
   end
-
-  config.treat_symbols_as_metadata_keys_with_true_values = true
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
