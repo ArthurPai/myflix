@@ -13,13 +13,8 @@ class Video < ActiveRecord::Base
     where("title LIKE ?", "%#{search_title}%").order('created_at desc')
   end
 
-  def average_rating
-    if reviews.count == 0
-      0
-    else
-      average = rating_sum.to_f / reviews.count.to_f
-      average.round(1)
-    end
+  def rating
+    (rating_sum.to_f / reviews.count.to_f).round(1) if reviews.count > 0
   end
 
   private
