@@ -2,14 +2,17 @@ require 'spec_helper'
 
 feature 'User invite friend' do
   given!(:john) { Fabricate(:user, email: 'john@example.com', password: 'password', full_name: 'John Doe') }
+  background do
+    clear_emails
+  end
 
   scenario 'invite friend and following each other when friend sign up', { js: true, vcr: true } do
     sign_in_user(john.email, john.password)
 
     invite_a_friend
     friend_accepts_invitation
-    # friend_sign_in
 
+    friend_sign_in
     friend_should_follow(john)
     friend_should_followed_by(john)
 
@@ -23,8 +26,7 @@ feature 'User invite friend' do
     fill_in 'Invitation Message', with: 'this is good site.'
     click_button 'Send Invitation'
 
-    click_on "Welcome, #{john.full_name}"
-    sign_out_user
+    sign_out_user(john.full_name)
   end
 
   def friend_accepts_invitation
@@ -42,14 +44,14 @@ feature 'User invite friend' do
   end
 
   def friend_sign_in
+    sign_out_user('Jane Doe')
     sign_in_user('jane@example.com', 'password')
   end
 
   def friend_should_follow(user)
     visit '/people'
     expect(page).to have_content(user.full_name)
-    click_on 'Welcome, Jane Doe'
-    sign_out_user
+    sign_out_user('Jane Doe')
   end
 
   def friend_should_followed_by(user)

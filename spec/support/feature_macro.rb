@@ -5,6 +5,7 @@ def sign_in_user(email, password)
   click_button 'Sign in'
 end
 
-def sign_out_user
+def sign_out_user(user_full_name)
+  click_on "Welcome, #{user_full_name}"
   click_link 'Sign Out'
 end
