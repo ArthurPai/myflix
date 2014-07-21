@@ -18,10 +18,12 @@ describe ForgotPasswordController do
   end
 
   describe 'POST create' do
+    before { ActionMailer::Base.deliveries.clear }
+    after { ActionMailer::Base.deliveries.clear }
+
     context 'with correct email of exist user' do
       let!(:john) { Fabricate(:user, email:'john@intxtion.com')}
       before { post :create, email: john.email }
-      after { ActionMailer::Base.deliveries.clear }
 
       it 'redirects to the confirm password reset page' do
         expect(response).to redirect_to confirm_password_reset_path

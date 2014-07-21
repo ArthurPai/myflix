@@ -19,7 +19,7 @@ feature 'Admin Add new video' do
     fill_in 'Video URL', :with => 'http://arthurflix.s3.amazonaws.com/videos/ff14.mp4'
     click_button 'Add Video'
 
-    sign_out_user
+    sign_out_user(admin.full_name)
     sign_in_user(john.email, john.password)
 
     visit home_path

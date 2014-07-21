@@ -17,24 +17,17 @@ class UsersController < ApplicationController
     @invitation_token = params[:invitation_token]
 
     if @user.valid?
-      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-      token = params[:stripeToken]
+      charge = StripeWrapper::Charge.create(amount: 999, card: params[:stripeToken], description: "Sign up charge from #{@user.email}")
 
-      begin
-        charge = Stripe::Charge.create(
-            :amount => 999,
-            :currency => 'usd',
-            :card => token,
-            :description => "Sign up charge from #{@user.email}"
-        )
+      if charge.successfully?
         @user.save
         flash[:success] = 'Register Succeed.'
         UserMailer.delay.welcome_email(@user)
         handle_invitation
         sign_in @user
         redirect_to home_path
-      rescue Stripe::CardError => e
-        flash[:danger] = e.message
+      else
+        flash.now[:danger] = charge.error_message
         render :new
       end
     else

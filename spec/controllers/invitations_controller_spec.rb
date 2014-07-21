@@ -14,6 +14,7 @@ describe InvitationsController do
 
     context 'with valid input' do
       before do
+        ActionMailer::Base.deliveries.clear
         post :create, name: 'jane', email: 'jane@example.com', message: 'Join this site!\nJane Come Here.'
       end
       after { ActionMailer::Base.deliveries.clear }
