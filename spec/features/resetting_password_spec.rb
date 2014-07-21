@@ -4,6 +4,7 @@ feature 'Resetting Password' do
   given!(:john) { Fabricate(:user, email: 'john@example.com', password: 'password', full_name: 'John Doe') }
   given!(:host) { Myflix::Application.config.action_mailer.default_url_options[:host] }
   background do
+    clear_emails
     # puts Capybara.app_host = 'http://myflix.dev'
     # puts Capybara.default_host = 'http://myflix.dev'
     # puts Capybara.server_host = 'http://myflix.dev'

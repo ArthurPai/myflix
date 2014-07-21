@@ -42,6 +42,8 @@ describe UsersController do
     end
 
     describe 'POST create' do
+      before { ActionMailer::Base.deliveries.clear }
+
       context 'with valid personal info and a declined card' do
         let(:user) { Fabricate.attributes_for(:user) }
         before do
