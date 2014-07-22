@@ -24,7 +24,7 @@ ActiveRecord::Migration.maintain_test_schema!
 Capybara.app_host = 'http://localhost:52662'
 Capybara.server_host = 'localhost'
 Capybara.server_port = 52662
-Capybara.javascript_driver = :webkit
+# Capybara.javascript_driver = :webkit
 
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/cassettes'
