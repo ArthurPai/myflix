@@ -1,5 +1,0 @@
-Question:
-1. twice submit: disable submit not working. ==> payments.js
-2. invite_friend_spec.rb testing not stable,
-   can't use 'localhost:52662', must use '127.0.0.1:52662' ==> environments/test.rb:17
-   must sleep(2) after friend sign up. ==> invite_friend_spec.rb:41
