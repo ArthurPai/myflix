@@ -7,13 +7,18 @@ describe 'UserManager' do
   context 'with personal info and valid credit card' do
     let(:fiona) { Fabricate.build(:user, email: 'fiona@intxtion.com', full_name: 'Fiona Cheng') }
     before do
-      charge = double('charge', successfully?: true)
-      expect(StripeWrapper::Charge).to receive(:create).and_return(charge)
+      customer = double('customer', successfully?: true, id: '4321')
+      expect(StripeWrapper::Customer).to receive(:create).and_return(customer)
     end
 
     it 'creates user' do
       UserManager.new(fiona).sign_up('stripe_token', nil)
       expect(User.count).to eq(1)
+    end
+
+    it 'saves stripe customer id to user' do
+      UserManager.new(fiona).sign_up('stripe_token', nil)
+      expect(User.first.stripe_customer_id).to eq('4321')
     end
 
     context 'email sending' do
@@ -78,8 +83,8 @@ describe 'UserManager' do
       expect(ActionMailer::Base.deliveries).to be_empty
     end
 
-    it 'does not charge the card' do
-      expect(StripeWrapper::Charge).not_to receive(:create)
+    it 'does not create subscription plane to the card' do
+      expect(StripeWrapper::Customer).not_to receive(:create)
       UserManager.new(user).sign_up('stripe_token', nil)
     end
   end
@@ -87,8 +92,8 @@ describe 'UserManager' do
   context 'with valid personal info and a declined card' do
     let(:user) { Fabricate.build(:user) }
     before do
-      charge = double('charge', successfully?: false, error_message: 'Your card was declined.' )
-      expect(StripeWrapper::Charge).to receive(:create).and_return(charge)
+      customer = double('customer', successfully?: false, error_message: 'Your card was declined.' )
+      expect(StripeWrapper::Customer).to receive(:create).and_return(customer)
     end
 
     it 'does not create user' do
