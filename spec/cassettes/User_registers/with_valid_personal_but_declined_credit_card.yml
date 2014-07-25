@@ -2,10 +2,10 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.stripe.com/v1/charges
+    uri: https://api.stripe.com/v1/customers
     body:
       encoding: US-ASCII
-      string: amount=999&currency=usd&card=tok_14IGNl4qb12mBuvUnpekTxf9&description=Sign%20up%20charge%20from%20john%40example.com
+      string: card=tok_14JnNb4qb12mBuvUlnE67W10&plan=Basic&description=Sign%20up%20charge%20from%20john%40example.com
     headers:
       Accept:
       - "*/*; q=0.5, application/xml"
@@ -22,7 +22,7 @@ http_interactions:
         ArthurMBP 13.3.0 Darwin Kernel Version 13.3.0: Tue Jun  3 21:27:35 PDT 2014;
         root:xnu-2422.110.17~1/RELEASE_X86_64 x86_64"}'
       Content-Length:
-      - '116'
+      - '103'
   response:
     status:
       code: 402
@@ -31,17 +31,17 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Sun, 20 Jul 2014 09:13:28 GMT
+      - Thu, 24 Jul 2014 14:39:36 GMT
       Content-Type:
       - application/json;charset=utf-8
       Content-Length:
-      - '162'
-      Cache-Control:
-      - no-cache, no-store
-      Stripe-Version:
-      - '2014-06-17'
+      - '117'
       Access-Control-Allow-Methods:
       - GET, POST, HEAD, OPTIONS, DELETE
+      Stripe-Version:
+      - '2014-06-17'
+      Cache-Control:
+      - no-cache, no-store
       Access-Control-Allow-Credentials:
       - 'true'
       Access-Control-Max-Age:
@@ -55,10 +55,9 @@ http_interactions:
           "error": {
             "message": "Your card was declined.",
             "type": "card_error",
-            "code": "card_declined",
-            "charge": "ch_14IGNo4qb12mBuvUrJcoOT2G"
+            "code": "card_declined"
           }
         }
     http_version: 
-  recorded_at: Sun, 20 Jul 2014 09:13:28 GMT
+  recorded_at: Thu, 24 Jul 2014 14:39:37 GMT
 recorded_with: VCR 2.9.2
