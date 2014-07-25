@@ -9,6 +9,7 @@ gem 'sass-rails'
 gem 'uglifier'
 gem 'jquery-rails'
 gem 'bootstrap_form'
+gem 'draper', '~> 1.3'
 
 gem 'faker'
 gem 'fabrication'

@@ -48,14 +48,14 @@ describe Video do
     let!(:monk) { Fabricate(:video, title: 'Monk', created_at: 2.days.ago) }
 
     it 'return 0 if there is no review' do
-      expect(monk.average_rating).to eq(0)
+      expect(monk.rating).to be_nil
     end
 
     it 'return average if there has many reviews' do
       Fabricate(:review, video: monk, rating: 1)
       Fabricate(:review, video: monk, rating: 1)
 
-      expect(monk.average_rating).to eql(1.0)
+      expect(monk.rating).to eql(1.0)
     end
 
     it 'return accurate to 1 decimal places if there has many reviews' do
@@ -63,7 +63,7 @@ describe Video do
       Fabricate(:review, video: monk, rating: 1)
       Fabricate(:review, video: monk, rating: 2)
 
-      expect(monk.average_rating).to eq(1.3)
+      expect(monk.rating).to eq(1.3)
     end
   end
 end
