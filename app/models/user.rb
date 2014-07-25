@@ -46,6 +46,10 @@ class User < ActiveRecord::Base
     update_column(:invitation_token, SecureRandom.urlsafe_base64)
   end
 
+  def deactivate!
+    update_column(:active, false)
+  end
+
   private
 
   def new_queue_order

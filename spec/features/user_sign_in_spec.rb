@@ -18,4 +18,13 @@ feature 'Signing in' do
     click_button 'Sign in'
     expect(page).to have_content 'Something error of your email or password!!'
   end
+
+  scenario 'with deactivated user' do
+    @john.deactivate!
+
+    sign_in_user(@john.email, @john.password)
+    expect(page).to have_content 'Your account has been suspended, please contact customer service.'
+    expect(page).not_to have_content 'Welcome, John Doe'
+    expect(page).not_to have_content 'Welcome back, John Doe'
+  end
 end
